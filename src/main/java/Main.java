@@ -12,6 +12,7 @@ public class Main {
         // 2. Получение нормальной формы
         List<String> result = getNoun(ready);
 
+
         // 3. Вывод
         if (!result.isEmpty()) {
             System.out.println("Результат: " + result.get(result.size() - 1));

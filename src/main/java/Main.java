@@ -1,46 +1,21 @@
-import org.apache.lucene.analysis.ru.RussianLightStemmer;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
-        String phrase = "Я увлекаюсь футболом";
+        Scanner scanner = new Scanner(System.in);
+        WordReceaver brain = new WordReceaver();
 
-        // 1. Очистка фразы
-        String[] ready = arrayReady(phrase);
+        System.out.println("ИИ: Привет! Напиши мне что-нибудь.");
 
-        // 2. Получение нормальной формы
-        List<String> result = getNoun(ready);
+        while (true) {
+            System.out.print("Вы: ");
+            String input = scanner.nextLine();
 
+            if (input.equalsIgnoreCase("выход")) break;
 
-        // 3. Вывод
-        if (!result.isEmpty()) {
-            System.out.println("Результат: " + result.get(result.size() - 1));
+            String response = brain.getFinalResponse(input);
+
+            System.out.println("ИИ: " + response);
         }
-    }
-
-    private static String[] arrayReady(String phrase) {
-        // Оставляем только русские буквы
-        String clean = phrase.replaceAll("[^а-яА-Я\\s]", "").toLowerCase();
-        return clean.trim().split("\\s+");
-    }
-
-    private static List<String> getNoun(String[] array) {
-        // Используем стеммер из Lucene (он у тебя точно есть в проекте)
-        RussianLightStemmer stemmer = new RussianLightStemmer();
-        List<String> processedWords = new ArrayList<>();
-
-        for (String word : array) {
-            // Пропускаем короткие слова (я, в, на)
-            if (word.length() <= 3) continue;
-
-            char[] chars = word.toCharArray();
-            // Метод stem возвращает длину новой основы слова
-            int length = stemmer.stem(chars, chars.length);
-
-            String base = new String(chars, 0, length);
-            processedWords.add(base);
-        }
-        return processedWords;
     }
 }

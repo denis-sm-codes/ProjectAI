@@ -1,39 +1,54 @@
-import answers.AnswerForAdjective;
-import answers.AnswerForNoun;
-import answers.AnswerForVerb;
+import answers.*;
+
+import java.util.List;
+import java.util.Random;
 
 public class WordReceaver {
     private final BestWordFind finder = new BestWordFind();
+    private final Memory memory = new Memory();
+    private final VectorService vectorService = new VectorService();
+
     private final AnswerForNoun nounHandler = new AnswerForNoun();
     private final AnswerForVerb verbHandler = new AnswerForVerb();
     private final AnswerForAdjective adjHandler = new AnswerForAdjective();
+    private final Random random = new Random();
+
+    private final List<String> list = List.of(
+            "Расскажи что-нибудь еще", "Ну я тебя понял",
+            "Интересно рассказываешь", "Хорошо, я запомнил",
+            "Понял, а что ещё?", "Вот это да!"
+    );
 
     public String getFinalResponse(String phrase) {
         try {
             LoggerShutter.startSilence();
-            AnalysisResult analysis = finder.findBestWord(phrase);
+            AnalysisResult mainAnalysis = finder.findBestWord(phrase);
+            List<String> allWords = finder.findAllSignificantWords(phrase);
             LoggerShutter.stopSilence();
 
-            if (analysis == null) {
-                return "Хм, интересно. Расскажи что-нибудь еще?";
+            // Сохраняем в память
+            if (mainAnalysis != null && !allWords.isEmpty()) {
+                String mappedValue = vectorService.findMeanWord(allWords);
+                memory.saveToMemory(mainAnalysis.word, mappedValue);
             }
 
-            // ВАЖНО: Здесь мы вызываем методы классов, а не пишем текст руками!
-            if (analysis.pos.equals("NN")) {
-                return nounHandler.generate(analysis.word);
+            // Если текущая фраза не понята — лезем в память
+            if (mainAnalysis == null) {
+                if (memory.memoryChek()) {
+                    SemanticPair pair = memory.pickRandomPair();
+                    return "Мы тут говорили про '" + pair.getOriginalWord() + "'. " +
+                            "Это ведь связано с темой '" + pair.getMappedWord() + "', да?";
+                }
+                return list.get(random.nextInt(list.size()));
             }
 
-            if (analysis.pos.equals("VB")) {
-                // Раньше тут была строка "Ты любишь...", а теперь ВЫЗОВ метода
-                return verbHandler.generate(analysis.word);
-            }
-
-            if (analysis.pos.equals("ADJ")) {
-                // Раньше тут была строка "Интересная мысль...", а теперь ВЫЗОВ метода
-                return adjHandler.generate(analysis.word);
-            }
-
-            return "Интересное слово: " + analysis.word;
+            // Обычные ответы
+            return switch (mainAnalysis.pos) {
+                case "NN" -> nounHandler.generate(mainAnalysis.word);
+                case "VB" -> verbHandler.generate(mainAnalysis.word);
+                case "ADJ" -> adjHandler.generate(mainAnalysis.word);
+                default -> "Интересное слово: " + mainAnalysis.word;
+            };
 
         } catch (Exception e) {
             LoggerShutter.stopSilence();

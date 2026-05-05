@@ -1,7 +1,13 @@
+import java.io.OutputStream;
+import java.io.PrintStream;
 import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
+        System.setErr(new PrintStream(new OutputStream() {
+            @Override
+            public void write(int b) {}
+        }));
         Scanner scanner = new Scanner(System.in);
         FinalResponse brain = new FinalResponse();
 

@@ -6,7 +6,6 @@ import java.util.Random;
 public class AnswerFromMemory {
     private final Random random = new Random();
     private final Memory memory;
-
     public AnswerFromMemory(Memory memory) {
         this.memory = memory;
     }
@@ -18,26 +17,33 @@ public class AnswerFromMemory {
         String original = pair.getOriginalWord();
         String mapped = pair.getMappedWord();
 
-        int choice = random.nextInt(4);
+        int choice = random.nextInt(6);
 
         if (choice == 0) {
-            return "Мы тут недавно упоминали '" + original + "'. Это ведь как-то связано с темой '" + mapped + "', я прав?";
+            return "Мы говорили про " + original + ", это как то связанно с " + mapped + "?";
         } else if (choice == 1) {
-            return "Слушай, а если вернуться к '" + original + "'... Ты считаешь, что это близко к понятию '" + mapped + "'?";
+            return "Ты упоминал " + original + ". Это тема похожа на " + mapped + "?";
         } else if (choice == 2) {
-            return "Мне всё не дает покоя слово '" + original + "'. Это же почти то же самое, что и '" + mapped + "'?";
+            return "Я помню ты упоминал " + original + ", это похоже на " + mapped + "?";
+        } else if (choice == 3) {
+            return "Что ещё ты можешь рассказать кроме " + original + " и " + mapped + "?";
+        } else if (choice == 4) {
+            return original + " это интересно так же как и " + mapped + ", не правда ли?";
         } else {
-            return "Помнишь, ты говорил про '" + original + "'? Мне кажется, это отличный пример для темы '" + mapped + "'.";
+            return "Я запомнил что мы говорили про " + original + " и " + mapped;
         }
     }
 
     public String askAbout(String key) {
         List<String> templates = List.of(
-                "Что для тебя означает '%s'?",
-                "А что такое '%s' в твоем понимании?",
-                "Мне интересно, а что ты подразумеваешь под словом '%s'?",
-                "Никак не пойму, '%s' — это что?"
+                "Что для тебя означает " + key + "?",
+                "А что такое " + key + " в твоем понимании?",
+                "Мне интересно, а что ты подразумеваешь под словом " + key + "?",
+                "Никак не пойму, " + key + " - это что?",
+                "Что такое " + key + "?",
+                "Расскажи мне про " + key,
+                "Проясни мне про " + key
         );
-        return String.format(templates.get(random.nextInt(templates.size())), key);
+        return templates.get(random.nextInt(templates.size()));
     }
 }

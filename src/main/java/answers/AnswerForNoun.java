@@ -6,8 +6,8 @@ import java.util.Random;
 public class AnswerForNoun {
     private final Random random = new Random();
 
-    private final List<String> firstPart = List.of("?Кто", "?Что", "?Какой", "?Чей",
-            "?Как", "?Где", "?Куда", "?Когда", "?Почему", "?Зачем", "?Сколько");
+    private final List<String> firstPart = List.of("Кто", "Что", "Какой", "Чей",
+            "Как", "Где", "Куда", "Когда", "Почему", "Зачем", "Сколько");
 
     private final List<String> secondPart = List.of(
             "обычно увлекается", "любит заниматься", "чаще выбирает", "отвечает за", // 0-3
@@ -85,13 +85,13 @@ public class AnswerForNoun {
     private String toPredlozh(String word) {
         if (word == null || word.isEmpty()) return word;
         char lastChar = word.charAt(word.length() - 1);
-        if (isConsonant(lastChar)) return word + "е";
+        if (isConsonant(lastChar)) return word + "а";
         if (lastChar == 'а' || lastChar == 'о') return word.substring(0, word.length() - 1) + "е";
         return word;
     }
 
     // (Кем? Чем?) Футболом, Аэробикой, Плаваньем. Применяется для связок: 0, 1, 4, 5, 18, 21
-    private String toTvorit(String word) {
+    public String toTvorit(String word) {
         if (word == null || word.isEmpty()) return word;
         char lastChar = word.charAt(word.length() - 1);
         if (lastChar == 'о' || lastChar == 'е') return word + "м";

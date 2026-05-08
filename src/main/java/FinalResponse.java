@@ -7,7 +7,6 @@ import answers.AnswerForVerb;
 import answers.AnswerForAdjective;
 import answers.DefaultResponses;
 
-import java.util.List;
 import java.util.Random;
 
 public class FinalResponse {

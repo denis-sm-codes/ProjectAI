@@ -40,11 +40,9 @@ public class AnswerForVerb {
     // И в итоге у нас получает созданный вопрос. Было работать, а стало Что всегда лучше работает
 
 
-
     int[] algoritmInfinitive = {0, 2, 4, 6, 7, 9, 10, 11, 13, 14, 15, 16, 17, 18, 29};
     int[] algoritmFormOne = {1, 3, 5, 8, 12};
     int[] algoritmFormTwo = {1, 3, 5, 8, 12};
-
 
 
     int[] algoritmZero = {0, 1, 2, 3};
@@ -54,57 +52,77 @@ public class AnswerForVerb {
     int[] algoritmFour = {11, 12};
     int[] algoritmFive = {13, 14};
     int[] algoritmSix = {15};
-    int[] algoritmSeven = {16, 7};
+    int[] algoritmSeven = {16, 17};
     int[] algoritmEight = {18, 19};
 
 
-    public String generate(String verb) {
+    public String generate (String verb) {
+            String finalVerb = resultForm(verb); // Сначала определяем форму глагола и методFlag
+            int index = 0;
 
-        String finalVerb = resultForm(verb);
-        int resultFlag = methodFlag;
-        if (resultFlag == 1){
-            int index = random.nextInt(algoritmInfinitive.length);
+            // 1. Выбираем случайный ИНДЕКС из доступных для данной формы глагола
+            if (methodFlag == 1) index = algoritmInfinitive[random.nextInt(algoritmInfinitive.length)];
+            else if (methodFlag == 2) index = algoritmFormOne[random.nextInt(algoritmFormOne.length)];
+            else if (methodFlag == 3) index = algoritmFormTwo[random.nextInt(algoritmFormTwo.length)];
 
+            int finalIndex = 0;
+            String finalSecond = "";
+
+            // 2. Ищем, к какой группе относится этот индекс, и берем случайное слово из ЭТОЙ группы
+            if (contains(algoritmZero, index)) {
+                finalIndex = 0;
+                finalSecond = pickRandom(algoritmZero);
+            } else if (contains(algoritmOne, index)) {
+                finalIndex = 1;
+                finalSecond = pickRandom(algoritmOne);
+            } else if (contains(algoritmTwo, index)) {
+                finalIndex = 2;
+                finalSecond = pickRandom(algoritmTwo);
+            } else if (contains(algoritmThree, index)) {
+                finalIndex = 3;
+                finalSecond = pickRandom(algoritmThree);
+            } else if (contains(algoritmFour, index)) {
+                finalIndex = 4;
+                finalSecond = pickRandom(algoritmFour);
+            } else if (contains(algoritmFive, index)) {
+                finalIndex = 5;
+                finalSecond = pickRandom(algoritmFive);
+            } else if (contains(algoritmSix, index)) {
+                finalIndex = 6;
+                finalSecond = pickRandom(algoritmSix);
+            } else if (contains(algoritmSeven, index)) {
+                finalIndex = 7;
+                finalSecond = pickRandom(algoritmSeven);
+            } else if (contains(algoritmEight, index)) {
+                finalIndex = 8;
+                finalSecond = pickRandom(algoritmEight);
+            }
+
+            // 3. Теперь берем первое слово, когда finalIndex УЖЕ определен
+            String firstWord = firstPart.get(finalIndex);
+
+            return firstWord + " " + finalSecond + " " + finalVerb + "?";
         }
-        if (resultFlag == 2){
-            int index = random.nextInt(algoritmFormOne.length);
-
-        }
-        if (resultFlag == 3){
-            int index = random.nextInt(algoritmFormTwo.length);
-
-        }
 
 
-
-
-
-        int queIndex = random.nextInt(firstPart.size());
-        String question = firstPart.get(queIndex);
-
-        int[] selectedAlgoritm = switch (queIndex) {
-            case 0 -> algoritmZero;
-            case 1 -> algoritmOne;
-            case 2 -> algoritmTwo;
-            case 3 -> algoritmThree;
-            case 4 -> algoritmFour;
-            case 5 -> algoritmFive;
-            case 6 -> algoritmSix;
-            case 7 -> algoritmSeven;
-            case 8 -> algoritmEight;
-            default -> throw new IllegalStateException("Внезапный сбой логики!");
-        };
-
-        int secondIndex = selectedAlgoritm[random.nextInt(selectedAlgoritm.length)];
-        String link = secondPart.get(secondIndex);
-
-
-        return question + " " + link + "  "+ "?";
+    // Помощник: берет случайную строку из secondPart по индексам из массива
+    private String pickRandom(int[] array) {
+        int randomIndex = array[random.nextInt(array.length)];
+        return secondPart.get(randomIndex);
     }
 
+    // Помощник: проверяет наличие числа в массиве
+    private boolean contains(int[] array, int key) {
+        for (int i : array) {
+            if (i == key) return true;
+        }
+        return false;
+    }
+
+
     private String resultForm(String verb) {
-        if (verb.endsWith("ать") || verb.endsWith("ять")){
-            if (random.nextInt(2) == 0){
+        if (verb.endsWith("ать") || verb.endsWith("ять")) {
+            if (random.nextInt(2) == 0) {
                 methodFlag = 1;
                 return verb;
             } else {
@@ -112,8 +130,8 @@ public class AnswerForVerb {
                 return toFormOne(verb);
             }
         }
-        if (verb.endsWith("ить")){
-            if (random.nextInt(2) == 0){
+        if (verb.endsWith("ить")) {
+            if (random.nextInt(2) == 0) {
                 methodFlag = 1;
                 return verb;
             } else {
@@ -125,46 +143,27 @@ public class AnswerForVerb {
     }
 
     private String toFormOne(String word) {
-        if (word == null || word.isEmpty()) { return word; }
+        if (word == null || word.isEmpty()) {
+            return word;
+        }
 
-        if (word.endsWith("ать")){
+        if (word.endsWith("ать")) {
             return word.substring(0, word.length() - 2) + "ет";
         }
-        if (word.endsWith("ять")){
+        if (word.endsWith("ять")) {
             return word.substring(0, word.length() - 2) + "ет";
         }
         return word;
     }
 
     private String toFormTwo(String word) {
-        if (word == null || word.isEmpty()) { return word; }
+        if (word == null || word.isEmpty()) {
+            return word;
+        }
 
-        if (word.endsWith("ить")){
+        if (word.endsWith("ить")) {
             return word.substring(0, word.length() - 1);
         }
         return word;
     }
-
-
-
-
-
-
-
-
-
-
-//    public String generate(String verb) {
-//        int choice = random.nextInt(4); // Выбираем из 4 вариантов
-//
-//        if (choice == 0) {
-//            return "О, ты любишь " + verb + "? Расскажи, почему это тебе нравится?";
-//        } else if (choice == 1) {
-//            return "Мне кажется, " + verb + " — это отличное времяпровождение!";
-//        } else if (choice == 2) {
-//            return "А как часто ты стараешься " + verb + "?";
-//        } else {
-//            return "Интересно... Я бы тоже хотел попробовать " + verb + ".";
-//        }
-//    }
 }

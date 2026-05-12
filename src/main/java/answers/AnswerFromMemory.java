@@ -28,7 +28,7 @@ public class AnswerFromMemory {
         } else if (choice == 3) {
             return "Что ещё ты можешь рассказать кроме " + original + " и " + mapped + "?";
         } else if (choice == 4) {
-            return original + " это интересно так же как и " + mapped + ", не правда ли?";
+            return original.toUpperCase() + " это интересно так же как и " + mapped + ", не правда ли?";
         } else {
             return "Я запомнил что мы говорили про " + original + " и " + mapped;
         }
